@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f2942">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="InsureVault">
+<title>InsureVault</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --bg: #0f2942;
+    --bg2: #162f4a;
+    --bg3: #1c3a57;
+    --card: #1e3f5e;
+    --card2: #243f5a;
+    --accent: #3d8ef0;
+    --accent2: #5ba0f5;
+    --accent-light: #1a3d6e;
+    --green: #2ecc71;
+    --green-dim: #1a4a30;
+    --red: #e74c3c;
+    --red-dim: #4a1a1a;
+    --amber: #f39c12;
+    --amber-dim: #4a3010;
+    --text: #e8f0fe;
+    --text2: #8db4d9;
+    --text3: #5a82a6;
+    --border: rgba(61,142,240,0.18);
+    --border2: rgba(61,142,240,0.30);
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --radius: 14px;
+    --radius-sm: 9px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); overflow: hidden; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; flex-direction: column; height: 100dvh; height: 100vh; overflow: hidden; }
+  .screen.active { display: flex; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px 12px;
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .topbar-back {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-light); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--accent2); flex-shrink: 0;
+  }
+  .topbar-title { flex: 1; }
+  .topbar-title h1 { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .topbar-title p { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .topbar-action { background: none; border: none; color: var(--accent2); cursor: pointer; padding: 6px; border-radius: 8px; }
+
+  /* ── SCROLL BODY ── */
+  .scroll-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+  .scroll-body::-webkit-scrollbar { width: 3px; }
+  .scroll-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── LOGIN SCREEN ── */
+  #screen-login { justify-content: center; align-items: center; padding: 32px 24px; background: var(--bg); }
+  .login-logo {
+    width: 80px; height: 80px; border-radius: 22px;
+    background: linear-gradient(135deg, var(--accent), #1a5ab8);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; box-shadow: 0 8px 32px rgba(61,142,240,0.35);
+  }
+  .login-logo svg { width: 44px; height: 44px; }
+  .login-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 380px;
+    text-align: center; box-shadow: var(--shadow);
+  }
+  .login-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .login-card p { color: var(--text2); font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+  .btn-google {
+    width: 100%; padding: 14px; border-radius: var(--radius-sm);
+    background: #fff; color: #1f1f1f; border: none;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: opacity 0.15s;
+  }
+  .btn-google:hover { opacity: 0.9; }
+  .login-note { font-size: 12px; color: var(--text3); margin-top: 18px; line-height: 1.6; }
+
+  /* ── PIN SCREEN ── */
+  #screen-pin { justify-content: center; align-items: center; padding: 32px 24px; }
+  .pin-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 360px; text-align: center; }
+  .pin-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .pin-card p { color: var(--text2); font-size: 13px; margin-bottom: 24px; line-height: 1.5; }
+  .pin-dots { display: flex; justify-content: center; gap: 14px; margin-bottom: 24px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text3); transition: all 0.2s; }
+  .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .pin-key {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px;
+    font-size: 20px; font-weight: 600; cursor: pointer;
+    color: var(--text); transition: background 0.1s, transform 0.1s;
+    user-select: none;
+  }
+  .pin-key:active { background: var(--accent-light); transform: scale(0.95); }
+  .pin-key.del { font-size: 16px; color: var(--text2); }
+  .pin-error { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 18px; }
+
+  /* ── DASHBOARD ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    color: var(--text3); text-transform: uppercase; margin: 18px 0 10px;
+  }
+  .section-label:first-child { margin-top: 4px; }
+  .plan-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    text-decoration: none; color: inherit;
+  }
+  .plan-card:active { background: var(--card2); border-color: var(--border2); }
+  .plan-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .plan-info { flex: 1; min-width: 0; }
+  .plan-name { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .plan-type { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .plan-arrow { color: var(--text3); flex-shrink: 0; }
+  .fab {
+    position: fixed; bottom: 28px; right: 20px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); border: none;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 26px; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(61,142,240,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+    z-index: 100;
+  }
+  .fab:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(61,142,240,0.4); }
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
+  .empty-state svg { margin-bottom: 16px; opacity: 0.4; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  /* ── DETAIL SCREEN ── */
+  .id-card-container {
+    background: linear-gradient(135deg, #0f2942 0%, #1a5ab8 50%, #0e3460 100%);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    border: 1px solid rgba(61,142,240,0.3); position: relative; overflow: hidden;
+    min-height: 160px;
+  }
+  .id-card-container::before {
+    content: ''; position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .id-card-placeholder { text-align: center; padding: 20px 0; }
+  .id-card-placeholder svg { opacity: 0.4; margin-bottom: 8px; }
+  .id-card-placeholder p { font-size: 13px; color: var(--text2); }
+  .id-card-img { width: 100%; border-radius: 8px; display: block; }
+  .id-card-pdf { text-align: center; padding: 16px; }
+  .id-card-pdf svg { margin-bottom: 8px; }
+  .id-card-pdf p { font-size: 14px; color: var(--text2); }
+
+  .cred-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; }
+  .cred-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+  }
+  .cred-row:last-child { border-bottom: none; }
+  .cred-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .cred-value { font-size: 14px; font-weight: 500; color: var(--text); font-family: monospace; }
+  .cred-copy {
+    background: var(--accent-light); border: none; border-radius: 8px;
+    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--accent2); flex-shrink: 0; transition: background 0.15s;
+  }
+  .cred-copy:active { background: var(--border2); }
+
+  .action-btn {
+    width: 100%; padding: 14px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text); font-size: 14px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 10px; transition: background 0.15s, border-color 0.15s;
+  }
+  .action-btn:active { background: var(--card2); border-color: var(--border2); }
+  .action-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .action-btn.danger { color: var(--red); border-color: var(--red-dim); }
+  .action-btn svg { flex-shrink: 0; }
+
+  /* ── MODAL / SHEET ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65); z-index: 200;
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: var(--bg2); border-top-left-radius: 22px; border-top-right-radius: 22px;
+    width: 100%; max-width: 500px; padding: 24px;
+    max-height: 90dvh; max-height: 90vh; overflow-y: auto;
+    border-top: 1px solid var(--border);
+  }
+  .modal-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 20px; }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+
+  .field-group { margin-bottom: 16px; }
+  .field-label { font-size: 12px; color: var(--text3); font-weight: 500; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field-input {
+    width: 100%; padding: 12px 14px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    color: var(--text); font-size: 15px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: var(--text3); }
+  select.field-input { cursor: pointer; }
+  select.field-input option { background: var(--bg3); }
+
+  .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
+  .emoji-btn {
+    padding: 10px 0; border-radius: 8px; background: var(--bg3);
+    border: 2px solid transparent; cursor: pointer; font-size: 20px;
+    transition: all 0.15s; text-align: center;
+  }
+  .emoji-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 100px; padding: 10px 20px;
+    font-size: 13px; color: var(--text); white-space: nowrap;
+    z-index: 9999; opacity: 0; transition: all 0.3s;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── NOTE CARDS ── */
+  .info-banner {
+    background: var(--accent-light); border: 1px solid rgba(61,142,240,0.3);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; color: var(--accent2); line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px;
+  }
+  .info-banner svg { flex-shrink: 0; margin-top: 1px; }
+
+  .pw-toggle {
+    background: none; border: none; cursor: pointer; color: var(--text3);
+    padding: 0; display: flex; align-items: center;
+  }
+  .tag {
+    display: inline-block; font-size: 11px; padding: 3px 9px;
+    border-radius: 100px; font-weight: 500;
+  }
+  .tag-health { background: rgba(46,204,113,0.15); color: #2ecc71; }
+  .tag-dental { background: rgba(52,152,219,0.15); color: #3498db; }
+  .tag-vision { background: rgba(243,156,18,0.15); color: #f39c12; }
+  .tag-pharmacy { background: rgba(155,89,182,0.15); color: #9b59b6; }
+  .tag-life { background: rgba(231,76,60,0.15); color: #e74c3c; }
+  .tag-auto { background: rgba(26,188,156,0.15); color: #1abc9c; }
+  .tag-other { background: rgba(127,140,141,0.15); color: #7f8c8d; }
+
+  .card-overlay-btns {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+
+  /* loading */
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(15,41,66,0.85); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .loading-overlay p { color: var(--text2); font-size: 14px; }
+
+  /* Animations */
+  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .plan-card { animation: fadeSlideUp 0.25s ease both; }
+
+  /* ── AI SCAN ── */
+  .scan-zone {
+    border: 2px dashed var(--border2); border-radius: var(--radius);
+    padding: 20px 16px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 20px; position: relative;
+  }
+  .scan-zone:hover { border-color: var(--accent); background: var(--accent-light); }
+  .scan-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .scan-zone-icon { font-size: 28px; margin-bottom: 8px; }
+  .scan-zone p { font-size: 14px; color: var(--text2); line-height: 1.5; margin: 0; }
+  .scan-zone strong { color: var(--accent2); }
+  .scan-scanning {
+    background: var(--accent-light); border: 2px solid var(--accent);
+    border-radius: var(--radius); padding: 16px; text-align: center;
+    margin-bottom: 20px; display: none;
+  }
+  .scan-scanning .scan-label { font-size: 14px; color: var(--accent2); margin-top: 8px; }
+  .scan-result-banner {
+    background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; color: #6edda0; margin-bottom: 16px;
+    display: none; align-items: center; gap: 8px;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .scanning-pulse { animation: pulse 1.2s ease infinite; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN: LOGIN
+═══════════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-logo">
+    <svg viewBox="0 0 44 44" fill="none">
+      <path d="M22 6L36 13V24C36 31.5 29.5 37.8 22 40C14.5 37.8 8 31.5 8 24V13L22 6Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <path d="M16 22L20 26L28 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="login-card">
+    <h2>InsureVault</h2>
+    <p>Securely store all your insurance credentials and ID cards. Everything lives in <strong>your own Google Drive</strong> — we never see your data.</p>
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13.2 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.5 46.5 31.4 46.5 24.5z"/><path fill="#FBBC05" d="M10.4 28.7A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.8 23.8 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l7.9-5.9z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-3.7-13.6-9.2l-7.9 5.9C6.6 42.6 14.6 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <p class="login-note">🔐 Your data is encrypted with a PIN only you know. Even Google cannot read your passwords.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN: PIN SETUP / ENTRY
+═══════════════════════════════════════════════ -->
+<div id="screen-pin" class="screen">
+  <div class="pin-card">
+    <h2 id="pin-title">Create a PIN</h2>
+    <p id="pin-subtitle">Choose a 4-digit PIN to encrypt your passwords. You'll need this every time you open the app.</p>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" style="opacity:0;" disabled></button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <p class="pin-error" id="pin-error"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN: DASHBOARD
+═══════════════════════════════════════════════ -->
+<div id="screen-dash" class="screen">
+  <div class="topbar">
+    <div class="topbar-title">
+      <h1>InsureVault</h1>
+      <p id="dash-sub">Loading…</p>
+    </div>
+    <button class="topbar-action" title="Sign out" onclick="signOut()">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="scroll-body" id="dash-body">
+    <div class="empty-state" id="dash-empty" style="display:none;">
+      <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      <p>No insurance plans yet.<br>Tap <strong>+</strong> to add your first plan.</p>
+    </div>
+    <div id="plans-list"></div>
+  </div>
+  <button class="fab" onclick="openAddModal()" aria-label="Add plan">+</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN: PLAN DETAIL
+═══════════════════════════════════════════════ -->
+<div id="screen-detail" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="showScreen('screen-dash')" aria-label="Back">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="topbar-title">
+      <h1 id="detail-name">Plan Name</h1>
+      <p id="detail-type">Type</p>
+    </div>
+    <button class="topbar-action" onclick="editCurrentPlan()" title="Edit">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
+  <div class="scroll-body" id="detail-body">
+    <!-- Filled dynamically -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: ADD / EDIT PLAN
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-add" onclick="closeModalIfBg(event,'modal-add')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-add-title">Add Insurance Plan</div>
+
+    <!-- AI SCAN ZONE — hidden when editing -->
+    <div id="scan-zone" class="scan-zone">
+      <input type="file" accept="image/*,application/pdf" onchange="handleAIScan(event)" id="scan-file-input">
+      <div class="scan-zone-icon">🪄</div>
+      <p><strong>Scan your insurance card</strong><br>Take a photo or upload an image/PDF &mdash; AI fills the fields automatically</p>
+    </div>
+
+    <!-- Scanning animation -->
+    <div class="scan-scanning" id="scan-scanning">
+      <div class="spinner scanning-pulse" style="margin:0 auto;"></div>
+      <div class="scan-label" id="scan-label">Reading card with AI…</div>
+    </div>
+
+    <!-- Success banner -->
+    <div class="scan-result-banner" id="scan-result-banner">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="scan-result-text">Fields filled from card — review and save</span>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Plan / Provider Name</label>
+      <input class="field-input" id="f-name" placeholder="e.g. BCBS Blue Advantage" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Category</label>
+      <select class="field-input" id="f-type">
+        <option value="health">🏥 Health</option>
+        <option value="dental">🦷 Dental</option>
+        <option value="vision">👁 Vision</option>
+        <option value="pharmacy">💊 Pharmacy</option>
+        <option value="life">❤️ Life Insurance</option>
+        <option value="auto">🚗 Auto Insurance</option>
+        <option value="other">📋 Other</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Member Portal URL</label>
+      <input class="field-input" id="f-url" placeholder="https://member.bcbs.com" type="url" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Username / Email</label>
+      <input class="field-input" id="f-user" placeholder="your@email.com" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Password</label>
+      <div style="position:relative;">
+        <input class="field-input" id="f-pass" type="password" placeholder="Password" autocomplete="off" style="padding-right:44px;">
+        <button class="pw-toggle" onclick="togglePw('f-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">
+          <svg id="eye-f-pass" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Member ID</label>
+      <input class="field-input" id="f-memberid" placeholder="e.g. XYZ123456789" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Group Number</label>
+      <input class="field-input" id="f-group" placeholder="e.g. G-98765" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Phone / Customer Service</label>
+      <input class="field-input" id="f-phone" placeholder="1-800-555-0100" type="tel" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Notes</label>
+      <textarea class="field-input" id="f-notes" rows="3" placeholder="Deductible, copay info, claims phone…"></textarea>
+    </div>
+
+    <button class="action-btn primary" onclick="savePlan()" style="margin-top:8px;">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      Save Plan
+    </button>
+    <button class="action-btn" onclick="closeModal('modal-add')">Cancel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading" style="display:none;">
+  <div class="spinner"></div>
+  <p id="loading-text">Loading…</p>
+</div>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG — user fills these in
+// ═══════════════════════════════════════════════
+const CONFIG = {
+  CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  API_KEY: 'YOUR_GOOGLE_API_KEY',
+  ANTHROPIC_KEY: 'YOUR_ANTHROPIC_API_KEY',   // from console.anthropic.com
+  SCOPES: 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file',
+  FOLDER_NAME: 'InsureVault',
+  DATA_FILE: 'vault_data.enc',
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let state = {
+  accessToken: null,
+  userEmail: '',
+  pinHash: null,         // SHA-256 of PIN stored in sessionStorage
+  cryptoKey: null,       // AES-GCM CryptoKey derived from PIN
+  plans: [],             // decrypted plan objects
+  folderId: null,
+  dataFileId: null,
+  editingPlanId: null,
+  currentPlanId: null,
+  pinMode: 'create',     // 'create' | 'confirm' | 'enter'
+  pinBuffer: '',
+  pinConfirmBuffer: '',
+};
+
+// ═══════════════════════════════════════════════
+// SCREEN ROUTING
+// ═══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════
+// GOOGLE OAUTH
+// ═══════════════════════════════════════════════
+function signInWithGoogle() {
+  if (CONFIG.CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
+    showToast('⚙️ Please set your Google Client ID first — see setup instructions', 4000);
+    return;
+  }
+  showLoading('Connecting to Google…');
+  const tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.CLIENT_ID,
+    scope: CONFIG.SCOPES,
+    callback: (response) => {
+      hideLoading();
+      if (response.error) { showToast('Sign-in failed: ' + response.error); return; }
+      state.accessToken = response.access_token;
+      afterSignIn();
+    },
+  });
+  tokenClient.requestAccessToken();
+}
+
+async function afterSignIn() {
+  showLoading('Setting up your vault…');
+  try {
+    await ensureFolder();
+    hideLoading();
+    const hasPinHash = sessionStorage.getItem('iv_pinhash');
+    const hasDataFile = await checkDataFileExists();
+    if (hasDataFile && hasPinHash) {
+      state.pinHash = hasPinHash;
+      await deriveCryptoKey(sessionStorage.getItem('iv_pin_raw'));
+      await loadAndDecryptData();
+      renderDashboard();
+      showScreen('screen-dash');
+    } else if (hasDataFile) {
+      startPinFlow('enter');
+    } else {
+      startPinFlow('create');
+    }
+  } catch(e) {
+    hideLoading();
+    showToast('Error: ' + e.message);
+  }
+}
+
+async function signOut() {
+  sessionStorage.clear();
+  state = { ...state, accessToken: null, plans: [], cryptoKey: null, pinHash: null };
+  showScreen('screen-login');
+}
+
+// ═══════════════════════════════════════════════
+// GOOGLE DRIVE HELPERS
+// ═══════════════════════════════════════════════
+async function driveRequest(path, method = 'GET', body = null, isUpload = false) {
+  const base = isUpload ? 'https://www.googleapis.com/upload/drive/v3' : 'https://www.googleapis.com/drive/v3';
+  const res = await fetch(base + path, {
+    method,
+    headers: {
+      'Authorization': 'Bearer ' + state.accessToken,
+      ...(body && !isUpload ? { 'Content-Type': 'application/json' } : {}),
+    },
+    body: body || undefined,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Drive API ${res.status}`);
+  }
+  const ct = res.headers.get('content-type') || '';
+  if (ct.includes('application/json')) return res.json();
+  return res;
+}
+
+async function ensureFolder() {
+  const q = `name='${CONFIG.FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  const data = await driveRequest(`/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if (data.files.length > 0) {
+    state.folderId = data.files[0].id;
+  } else {
+    const folder = await driveRequest('/files', 'POST', JSON.stringify({
+      name: CONFIG.FOLDER_NAME,
+      mimeType: 'application/vnd.google-apps.folder',
+    }));
+    state.folderId = folder.id;
+  }
+}
+
+async function checkDataFileExists() {
+  const q = `name='${CONFIG.DATA_FILE}' and '${state.folderId}' in parents and trashed=false`;
+  const data = await driveRequest(`/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if (data.files.length > 0) {
+    state.dataFileId = data.files[0].id;
+    return true;
+  }
+  return false;
+}
+
+async function saveDataToDrive() {
+  const encrypted = await encryptData(JSON.stringify(state.plans));
+  const meta = { name: CONFIG.DATA_FILE, parents: state.dataFileId ? undefined : [state.folderId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+  form.append('file', new Blob([encrypted], { type: 'application/octet-stream' }));
+
+  if (state.dataFileId) {
+    // Update
+    const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${state.dataFileId}?uploadType=multipart`, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + state.accessToken },
+      body: form,
+    });
+    if (!res.ok) throw new Error('Save failed');
+  } else {
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + state.accessToken },
+      body: form,
+    });
+    if (!res.ok) throw new Error('Save failed');
+    const data = await res.json();
+    state.dataFileId = data.id;
+  }
+}
+
+async function loadAndDecryptData() {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${state.dataFileId}?alt=media`, {
+    headers: { 'Authorization': 'Bearer ' + state.accessToken },
+  });
+  if (!res.ok) throw new Error('Could not load vault data');
+  const buf = await res.arrayBuffer();
+  const json = await decryptData(buf);
+  state.plans = JSON.parse(json);
+}
+
+// Upload a card image/PDF to Drive, returns file ID
+async function uploadCardFile(planId, file) {
+  const fileName = `card_${planId}_${file.name}`;
+  const meta = { name: fileName, parents: [state.folderId] };
+
+  // Delete old card if exists
+  const plan = state.plans.find(p => p.id === planId);
+  if (plan && plan.cardFileId) {
+    await driveRequest(`/files/${plan.cardFileId}`, 'DELETE').catch(() => {});
+  }
+
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+  form.append('file', file);
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + state.accessToken },
+    body: form,
+  });
+  if (!res.ok) throw new Error('Upload failed');
+  const data = await res.json();
+  return data.id;
+}
+
+async function downloadCardFile(fileId, fileName) {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    headers: { 'Authorization': 'Bearer ' + state.accessToken },
+  });
+  if (!res.ok) throw new Error('Download failed');
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = fileName;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+async function loadCardAsDataURL(fileId) {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    headers: { 'Authorization': 'Bearer ' + state.accessToken },
+  });
+  if (!res.ok) throw new Error('Failed to load card');
+  const blob = await res.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// CRYPTO (AES-GCM + PBKDF2)
+// ═══════════════════════════════════════════════
+async function deriveCryptoKey(pin) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
+  const salt = enc.encode('InsureVaultSalt2025');
+  state.cryptoKey = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptData(text) {
+  const enc = new TextEncoder();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, state.cryptoKey, enc.encode(text));
+  const combined = new Uint8Array(12 + encrypted.byteLength);
+  combined.set(iv, 0);
+  combined.set(new Uint8Array(encrypted), 12);
+  return combined.buffer;
+}
+
+async function decryptData(buffer) {
+  const data = new Uint8Array(buffer);
+  const iv = data.slice(0, 12);
+  const encrypted = data.slice(12);
+  const dec = new TextDecoder();
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, state.cryptoKey, encrypted);
+  return dec.decode(decrypted);
+}
+
+async function sha256(str) {
+  const enc = new TextEncoder();
+  const hash = await crypto.subtle.digest('SHA-256', enc.encode(str));
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════
+// PIN FLOW
+// ═══════════════════════════════════════════════
+function startPinFlow(mode) {
+  state.pinMode = mode;
+  state.pinBuffer = '';
+  state.pinConfirmBuffer = '';
+  updatePinDots(0);
+  document.getElementById('pin-error').textContent = '';
+  if (mode === 'create') {
+    document.getElementById('pin-title').textContent = 'Create a PIN';
+    document.getElementById('pin-subtitle').textContent = 'Choose a 4-digit PIN to encrypt your passwords. You\'ll need this every time you open the app.';
+  } else if (mode === 'confirm') {
+    document.getElementById('pin-title').textContent = 'Confirm PIN';
+    document.getElementById('pin-subtitle').textContent = 'Enter your PIN again to confirm.';
+  } else {
+    document.getElementById('pin-title').textContent = 'Enter PIN';
+    document.getElementById('pin-subtitle').textContent = 'Enter your PIN to unlock the vault.';
+  }
+  showScreen('screen-pin');
+}
+
+function updatePinDots(count) {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < count);
+  }
+}
+
+function pinKey(digit) {
+  if (state.pinMode === 'create' || state.pinMode === 'confirm') {
+    let buf = state.pinMode === 'create' ? state.pinBuffer : state.pinConfirmBuffer;
+    if (buf.length >= 4) return;
+    buf += digit;
+    if (state.pinMode === 'create') state.pinBuffer = buf;
+    else state.pinConfirmBuffer = buf;
+    updatePinDots(buf.length);
+    if (buf.length === 4) {
+      setTimeout(() => {
+        if (state.pinMode === 'create') {
+          startPinFlow('confirm');
+        } else {
+          if (state.pinBuffer === state.pinConfirmBuffer) {
+            finishPinCreate(state.pinBuffer);
+          } else {
+            document.getElementById('pin-error').textContent = "PINs don't match. Try again.";
+            state.pinBuffer = '';
+            state.pinConfirmBuffer = '';
+            setTimeout(() => startPinFlow('create'), 800);
+          }
+        }
+      }, 200);
+    }
+  } else {
+    // enter mode
+    if (state.pinBuffer.length >= 4) return;
+    state.pinBuffer += digit;
+    updatePinDots(state.pinBuffer.length);
+    if (state.pinBuffer.length === 4) {
+      setTimeout(() => verifyPin(state.pinBuffer), 200);
+    }
+  }
+}
+
+function pinDel() {
+  if (state.pinMode === 'confirm') {
+    state.pinConfirmBuffer = state.pinConfirmBuffer.slice(0, -1);
+    updatePinDots(state.pinConfirmBuffer.length);
+  } else {
+    state.pinBuffer = state.pinBuffer.slice(0, -1);
+    updatePinDots(state.pinBuffer.length);
+  }
+}
+
+async function finishPinCreate(pin) {
+  showLoading('Setting up encryption…');
+  await deriveCryptoKey(pin);
+  state.pinHash = await sha256(pin);
+  sessionStorage.setItem('iv_pinhash', state.pinHash);
+  sessionStorage.setItem('iv_pin_raw', pin);
+  state.plans = [];
+  await saveDataToDrive();
+  hideLoading();
+  renderDashboard();
+  showScreen('screen-dash');
+}
+
+async function verifyPin(pin) {
+  const hash = await sha256(pin);
+  state.pinBuffer = '';
+  updatePinDots(0);
+  if (sessionStorage.getItem('iv_pinhash') === hash) {
+    await deriveCryptoKey(pin);
+    sessionStorage.setItem('iv_pin_raw', pin);
+    showLoading('Decrypting vault…');
+    try {
+      await loadAndDecryptData();
+      hideLoading();
+      renderDashboard();
+      showScreen('screen-dash');
+    } catch(e) {
+      hideLoading();
+      document.getElementById('pin-error').textContent = 'Wrong PIN or corrupted data.';
+    }
+  } else {
+    // No cached hash — try to decrypt
+    showLoading('Checking PIN…');
+    await deriveCryptoKey(pin);
+    try {
+      await loadAndDecryptData();
+      state.pinHash = hash;
+      sessionStorage.setItem('iv_pinhash', hash);
+      sessionStorage.setItem('iv_pin_raw', pin);
+      hideLoading();
+      renderDashboard();
+      showScreen('screen-dash');
+    } catch(e) {
+      hideLoading();
+      state.cryptoKey = null;
+      document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+const TYPE_META = {
+  health:   { label: 'Health Insurance',  emoji: '🏥', tagClass: 'tag-health' },
+  dental:   { label: 'Dental Insurance',  emoji: '🦷', tagClass: 'tag-dental' },
+  vision:   { label: 'Vision Insurance',  emoji: '👁',  tagClass: 'tag-vision' },
+  pharmacy: { label: 'Pharmacy',          emoji: '💊', tagClass: 'tag-pharmacy' },
+  life:     { label: 'Life Insurance',    emoji: '❤️', tagClass: 'tag-life' },
+  auto:     { label: 'Auto Insurance',    emoji: '🚗', tagClass: 'tag-auto' },
+  other:    { label: 'Other',             emoji: '📋', tagClass: 'tag-other' },
+};
+
+function renderDashboard() {
+  const user = sessionStorage.getItem('iv_user') || '';
+  document.getElementById('dash-sub').textContent = state.plans.length
+    ? `${state.plans.length} plan${state.plans.length > 1 ? 's' : ''} · ${user}`
+    : user;
+
+  const list = document.getElementById('plans-list');
+  const empty = document.getElementById('dash-empty');
+  if (state.plans.length === 0) { list.innerHTML = ''; empty.style.display = ''; return; }
+  empty.style.display = 'none';
+
+  // Group by type
+  const groups = {};
+  state.plans.forEach(p => {
+    if (!groups[p.type]) groups[p.type] = [];
+    groups[p.type].push(p);
+  });
+
+  const order = ['health','dental','vision','pharmacy','life','auto','other'];
+  let html = '';
+  order.forEach(type => {
+    if (!groups[type]) return;
+    const meta = TYPE_META[type];
+    html += `<div class="section-label">${meta.label}</div>`;
+    groups[type].forEach((p, i) => {
+      html += `<div class="plan-card" onclick="openDetail('${p.id}')" style="animation-delay:${i*0.04}s">
+        <div class="plan-icon" style="background:rgba(255,255,255,0.07)">${meta.emoji}</div>
+        <div class="plan-info">
+          <div class="plan-name">${esc(p.name)}</div>
+          <div class="plan-type">${p.memberid ? 'ID: ' + esc(p.memberid) : (p.url ? esc(p.url.replace(/^https?:\/\//,'')) : 'No URL set')}</div>
+        </div>
+        <svg class="plan-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`;
+    });
+  });
+  list.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// PLAN DETAIL
+// ═══════════════════════════════════════════════
+async function openDetail(planId) {
+  const plan = state.plans.find(p => p.id === planId);
+  if (!plan) return;
+  state.currentPlanId = planId;
+  const meta = TYPE_META[plan.type] || TYPE_META.other;
+
+  document.getElementById('detail-name').textContent = plan.name;
+  document.getElementById('detail-type').textContent = meta.label;
+
+  const body = document.getElementById('detail-body');
+  body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:80px"><div class="spinner"></div></div>`;
+  showScreen('screen-detail');
+
+  // Build HTML
+  let cardHTML = '';
+  if (plan.cardFileId) {
+    try {
+      const dataURL = await loadCardAsDataURL(plan.cardFileId);
+      const isImg = dataURL.startsWith('data:image');
+      if (isImg) {
+        cardHTML = `<img class="id-card-img" src="${dataURL}" alt="Insurance ID Card">`;
+      } else {
+        cardHTML = `<div class="id-card-pdf">
+          <svg width="40" height="40" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <p>${esc(plan.cardFileName || 'Insurance Card')}</p>
+        </div>`;
+      }
+    } catch(e) {
+      cardHTML = `<div class="id-card-placeholder"><p>Could not load card</p></div>`;
+    }
+  } else {
+    cardHTML = `<div class="id-card-placeholder">
+      <svg width="36" height="36" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <p>No ID card uploaded</p>
+    </div>`;
+  }
+
+  const hasPass = !!plan.password;
+  body.innerHTML = `
+    <div style="padding:16px">
+
+      <div class="section-label" style="margin-top:4px">Insurance ID Card</div>
+      <div class="id-card-container">${cardHTML}</div>
+      <div class="card-overlay-btns">
+        ${plan.cardFileId ? `
+          <button class="action-btn" style="flex:1;margin:0" onclick="downloadCard('${planId}')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </button>` : ''}
+        <label class="action-btn" style="flex:1;margin:0;cursor:pointer">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          ${plan.cardFileId ? 'Replace' : 'Upload'} Card
+          <input type="file" accept="image/*,application/pdf" style="display:none" onchange="handleCardUpload(event,'${planId}')">
+        </label>
+      </div>
+
+      <div class="section-label">Login Credentials</div>
+      <div class="cred-section">
+        ${plan.username ? `
+        <div class="cred-row">
+          <div style="flex:1">
+            <div class="cred-label">Username / Email</div>
+            <div class="cred-value">${esc(plan.username)}</div>
+          </div>
+          <button class="cred-copy" onclick="copyText('${esc(plan.username)}','Username copied')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : ''}
+        ${hasPass ? `
+        <div class="cred-row">
+          <div style="flex:1">
+            <div class="cred-label">Password</div>
+            <div class="cred-value" id="pw-display-${planId}">••••••••••</div>
+          </div>
+          <button class="cred-copy" onclick="togglePwDisplay('${planId}','${esc(plan.password)}')" title="Show/hide">
+            <svg id="pw-eye-${planId}" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="cred-copy" onclick="copyText('${esc(plan.password)}','Password copied')" title="Copy">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : ''}
+        ${!plan.username && !hasPass ? '<div class="cred-row"><div style="color:var(--text3);font-size:13px">No credentials saved</div></div>' : ''}
+      </div>
+
+      ${(plan.memberid || plan.group || plan.phone) ? `
+      <div class="section-label">Plan Details</div>
+      <div class="cred-section">
+        ${plan.memberid ? `<div class="cred-row"><div style="flex:1"><div class="cred-label">Member ID</div><div class="cred-value">${esc(plan.memberid)}</div></div><button class="cred-copy" onclick="copyText('${esc(plan.memberid)}','Member ID copied')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>` : ''}
+        ${plan.group ? `<div class="cred-row"><div style="flex:1"><div class="cred-label">Group Number</div><div class="cred-value">${esc(plan.group)}</div></div></div>` : ''}
+        ${plan.phone ? `<div class="cred-row"><div style="flex:1"><div class="cred-label">Customer Service</div><div class="cred-value">${esc(plan.phone)}</div></div><a href="tel:${esc(plan.phone)}" class="cred-copy" style="text-decoration:none"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.69a16 16 0 0 0 6.29 6.29l.61-.61a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a></div>` : ''}
+      </div>` : ''}
+
+      ${plan.url ? `
+      <div class="section-label">Member Portal</div>
+      <a href="${esc(plan.url)}" target="_blank" class="action-btn" style="text-decoration:none;color:var(--accent2)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Open Member Portal
+      </a>` : ''}
+
+      ${plan.notes ? `
+      <div class="section-label">Notes</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--text2);line-height:1.6;white-space:pre-wrap;">${esc(plan.notes)}</div>` : ''}
+
+      <div style="margin-top:24px">
+        <button class="action-btn danger" onclick="deletePlan('${planId}')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete Plan
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function togglePwDisplay(planId, pw) {
+  const el = document.getElementById('pw-display-' + planId);
+  const showing = el.textContent !== '••••••••••';
+  el.textContent = showing ? '••••••••••' : pw;
+}
+
+async function handleCardUpload(event, planId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showLoading('Uploading ID card…');
+  try {
+    const fileId = await uploadCardFile(planId, file);
+    const plan = state.plans.find(p => p.id === planId);
+    plan.cardFileId = fileId;
+    plan.cardFileName = file.name;
+    await saveDataToDrive();
+    hideLoading();
+    showToast('✅ ID card uploaded');
+    openDetail(planId);
+  } catch(e) {
+    hideLoading();
+    showToast('Upload failed: ' + e.message);
+  }
+}
+
+async function downloadCard(planId) {
+  const plan = state.plans.find(p => p.id === planId);
+  if (!plan || !plan.cardFileId) return;
+  showLoading('Downloading…');
+  try {
+    await downloadCardFile(plan.cardFileId, plan.cardFileName || 'insurance_card');
+    hideLoading();
+    showToast('✅ Downloaded');
+  } catch(e) {
+    hideLoading();
+    showToast('Download failed: ' + e.message);
+  }
+}
+
+async function deletePlan(planId) {
+  if (!confirm('Delete this plan? This cannot be undone.')) return;
+  const plan = state.plans.find(p => p.id === planId);
+  if (plan && plan.cardFileId) {
+    await driveRequest(`/files/${plan.cardFileId}`, 'DELETE').catch(() => {});
+  }
+  state.plans = state.plans.filter(p => p.id !== planId);
+  showLoading('Saving…');
+  await saveDataToDrive();
+  hideLoading();
+  showToast('Plan deleted');
+  renderDashboard();
+  showScreen('screen-dash');
+}
+
+// ═══════════════════════════════════════════════
+// AI CARD SCAN
+// ═══════════════════════════════════════════════
+async function handleAIScan(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (CONFIG.ANTHROPIC_KEY === 'YOUR_ANTHROPIC_API_KEY') {
+    showToast('⚙️ Add your Anthropic API key to CONFIG to use AI scanning', 4000);
+    return;
+  }
+
+  // Show scanning state
+  document.getElementById('scan-zone').style.display = 'none';
+  document.getElementById('scan-result-banner').style.display = 'none';
+  const scanBox = document.getElementById('scan-scanning');
+  const scanLabel = document.getElementById('scan-label');
+  scanBox.style.display = 'block';
+  scanLabel.textContent = 'Reading your card…';
+
+  try {
+    // Convert file to base64
+    const base64 = await fileToBase64(file);
+    const isPDF = file.type === 'application/pdf';
+
+    scanLabel.textContent = 'AI is extracting details…';
+
+    const messages = [{
+      role: 'user',
+      content: [
+        isPDF
+          ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } }
+          : { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: base64 } },
+        {
+          type: 'text',
+          text: `This is an insurance ID card. Extract every piece of information visible on it and return ONLY a JSON object with these exact keys (use empty string "" if not found):
+{
+  "name": "insurance company and plan name, e.g. Blue Cross Blue Shield PPO",
+  "type": "one of: health, dental, vision, pharmacy, life, auto, other",
+  "memberid": "member ID or subscriber ID number",
+  "group": "group number or group name",
+  "phone": "member services or customer service phone number",
+  "rxbin": "pharmacy RX BIN number if present",
+  "rxpcn": "pharmacy RX PCN if present",
+  "rxgrp": "pharmacy RX group if present",
+  "copay_primary": "primary care copay if shown",
+  "copay_specialist": "specialist copay if shown",
+  "copay_er": "ER copay if shown",
+  "deductible": "deductible amount if shown",
+  "notes": "any other useful text on the card like plan type, effective date, payer ID, claims address",
+  "url": "website URL if shown on card, else empty string"
+}
+Return ONLY the JSON object, no other text.`
+        }
+      ]
+    }];
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CONFIG.ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'AI scan failed (' + response.status + ')');
+    }
+
+    const data = await response.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+
+    // Parse JSON from response
+    let extracted;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      extracted = JSON.parse(clean);
+    } catch(e) {
+      throw new Error('Could not parse AI response');
+    }
+
+    // Build notes from pharmacy/copay details
+    let autoNotes = [];
+    if (extracted.rxbin)           autoNotes.push('RX BIN: ' + extracted.rxbin);
+    if (extracted.rxpcn)           autoNotes.push('RX PCN: ' + extracted.rxpcn);
+    if (extracted.rxgrp)           autoNotes.push('RX Group: ' + extracted.rxgrp);
+    if (extracted.copay_primary)   autoNotes.push('Primary care copay: ' + extracted.copay_primary);
+    if (extracted.copay_specialist)autoNotes.push('Specialist copay: ' + extracted.copay_specialist);
+    if (extracted.copay_er)        autoNotes.push('ER copay: ' + extracted.copay_er);
+    if (extracted.deductible)      autoNotes.push('Deductible: ' + extracted.deductible);
+    if (extracted.notes)           autoNotes.push(extracted.notes);
+    const notesText = autoNotes.join('\n');
+
+    // Fill form fields (only override if AI found something)
+    if (extracted.name)    document.getElementById('f-name').value    = extracted.name;
+    if (extracted.type)    document.getElementById('f-type').value    = extracted.type;
+    if (extracted.memberid)document.getElementById('f-memberid').value= extracted.memberid;
+    if (extracted.group)   document.getElementById('f-group').value   = extracted.group;
+    if (extracted.phone)   document.getElementById('f-phone').value   = extracted.phone;
+    if (extracted.url)     document.getElementById('f-url').value     = extracted.url;
+    if (notesText)         document.getElementById('f-notes').value   = notesText;
+
+    // Count how many fields were filled
+    const filled = [extracted.name, extracted.memberid, extracted.group, extracted.phone].filter(Boolean).length;
+
+    // Hide scanner, show success
+    scanBox.style.display = 'none';
+    const banner = document.getElementById('scan-result-banner');
+    banner.style.display = 'flex';
+    document.getElementById('scan-result-text').textContent =
+      `✨ ${filled} field${filled !== 1 ? 's' : ''} filled automatically — review and save`;
+
+    // Store the scanned file so it auto-uploads when plan is saved
+    state.pendingCardFile = file;
+
+    // Reset file input so same file can be re-selected
+    document.getElementById('scan-file-input').value = '';
+
+  } catch(e) {
+    scanBox.style.display = 'none';
+    document.getElementById('scan-zone').style.display = '';
+    showToast('Scan failed: ' + e.message, 4000);
+    document.getElementById('scan-file-input').value = '';
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ADD / EDIT MODAL
+// ═══════════════════════════════════════════════
+function openAddModal() {
+  state.editingPlanId = null;
+  state.pendingCardFile = null;
+  document.getElementById('modal-add-title').textContent = 'Add Insurance Plan';
+  ['f-name','f-url','f-user','f-pass','f-memberid','f-group','f-phone','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-type').value = 'health';
+  // Show scan zone, hide result states
+  document.getElementById('scan-zone').style.display = '';
+  document.getElementById('scan-scanning').style.display = 'none';
+  document.getElementById('scan-result-banner').style.display = 'none';
+  document.getElementById('modal-add').classList.add('open');
+}
+
+function editCurrentPlan() {
+  const plan = state.plans.find(p => p.id === state.currentPlanId);
+  if (!plan) return;
+  state.editingPlanId = plan.id;
+  state.pendingCardFile = null;
+  document.getElementById('modal-add-title').textContent = 'Edit Plan';
+  // Hide scan zone when editing (card already saved)
+  document.getElementById('scan-zone').style.display = 'none';
+  document.getElementById('scan-scanning').style.display = 'none';
+  document.getElementById('scan-result-banner').style.display = 'none';
+  document.getElementById('f-name').value = plan.name || '';
+  document.getElementById('f-type').value = plan.type || 'health';
+  document.getElementById('f-url').value = plan.url || '';
+  document.getElementById('f-user').value = plan.username || '';
+  document.getElementById('f-pass').value = plan.password || '';
+  document.getElementById('f-memberid').value = plan.memberid || '';
+  document.getElementById('f-group').value = plan.group || '';
+  document.getElementById('f-phone').value = plan.phone || '';
+  document.getElementById('f-notes').value = plan.notes || '';
+  document.getElementById('modal-add').classList.add('open');
+}
+
+async function savePlan() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('Please enter a plan name'); return; }
+  const isEditing = !!state.editingPlanId;
+  const plan = {
+    id: state.editingPlanId || 'p_' + Date.now(),
+    name,
+    type: document.getElementById('f-type').value,
+    url: document.getElementById('f-url').value.trim(),
+    username: document.getElementById('f-user').value.trim(),
+    password: document.getElementById('f-pass').value,
+    memberid: document.getElementById('f-memberid').value.trim(),
+    group: document.getElementById('f-group').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+  if (isEditing) {
+    const existing = state.plans.find(p => p.id === state.editingPlanId);
+    if (existing) { plan.cardFileId = existing.cardFileId; plan.cardFileName = existing.cardFileName; }
+    state.plans = state.plans.map(p => p.id === state.editingPlanId ? plan : p);
+  } else {
+    state.plans.push(plan);
+  }
+  closeModal('modal-add');
+
+  // If card was scanned, upload it automatically
+  if (state.pendingCardFile) {
+    showLoading('Uploading card image…');
+    try {
+      const fileId = await uploadCardFile(plan.id, state.pendingCardFile);
+      const target = state.plans.find(p => p.id === plan.id);
+      if (target) { target.cardFileId = fileId; target.cardFileName = state.pendingCardFile.name; }
+      plan.cardFileId = fileId;
+      plan.cardFileName = state.pendingCardFile.name;
+    } catch(e) {
+      showToast('Card upload failed: ' + e.message, 3000);
+    }
+    state.pendingCardFile = null;
+  }
+
+  showLoading('Saving…');
+  await saveDataToDrive();
+  hideLoading();
+  showToast(isEditing ? '✅ Plan updated' : '✅ Plan saved with card');
+  renderDashboard();
+  if (isEditing) {
+    state.currentPlanId = plan.id;
+    openDetail(plan.id);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalIfBg(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function copyText(text, msg) {
+  navigator.clipboard.writeText(text).then(() => showToast('📋 ' + (msg || 'Copied')));
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+let toastTimer;
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function showLoading(msg) {
+  document.getElementById('loading-text').textContent = msg || 'Loading…';
+  document.getElementById('loading').style.display = 'flex';
+}
+function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+// Register service worker for offline/PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
