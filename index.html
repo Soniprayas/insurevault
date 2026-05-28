@@ -516,9 +516,9 @@
 // CONFIG — user fills these in
 // ═══════════════════════════════════════════════
 const CONFIG = {
-  CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  CLIENT_ID: '974457773661-1f0m5qrd9r70dvu0st4vmjl105hgaqik.apps.googleusercontent.com',
   API_KEY: 'YOUR_GOOGLE_API_KEY',
-  ANTHROPIC_KEY: 'YOUR_ANTHROPIC_API_KEY',   // from console.anthropic.com
+  ANTHROPIC_KEY: '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',   // from console.anthropic.com
   SCOPES: 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file',
   FOLDER_NAME: 'InsureVault',
   DATA_FILE: 'vault_data.enc',
@@ -554,7 +554,7 @@ function showScreen(id) {
 // GOOGLE OAUTH
 // ═══════════════════════════════════════════════
 function signInWithGoogle() {
-  if (CONFIG.CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
+  if (CONFIG.CLIENT_ID === '974457773661-1f0m5qrd9r70dvu0st4vmjl105hgaqik.apps.googleusercontent.com') {
     showToast('⚙️ Please set your Google Client ID first — see setup instructions', 4000);
     return;
   }
@@ -1127,7 +1127,7 @@ async function handleAIScan(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  if (CONFIG.ANTHROPIC_KEY === 'YOUR_ANTHROPIC_API_KEY') {
+  if (CONFIG.ANTHROPIC_KEY === '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') {
     showToast('⚙️ Add your Anthropic API key to CONFIG to use AI scanning', 4000);
     return;
   }
