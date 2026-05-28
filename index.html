@@ -830,12 +830,12 @@ function pinKey(digit) {
     }
   } else {
     // enter mode
+    if (state.pinBuffer.length >= 4) return;
+    state.pinBuffer += digit;
+    updatePinDots(state.pinBuffer.length);
     if (state.pinBuffer.length === 4) {
-    const pin = state.pinBuffer;
-    setTimeout(async () => {
-    await verifyPin(pin);
-    state.pinBuffer = '';   // IMPORTANT RESET
-     }, 200);
+      const pin = state.pinBuffer;
+      setTimeout(() => verifyPin(pin), 200);
     }
   }
 }
@@ -889,7 +889,6 @@ async function verifyPin(pin) {
     hideLoading();
     state.cryptoKey = null;
     document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
-    }
   }
 }
 
