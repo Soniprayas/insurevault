@@ -540,6 +540,7 @@ let state = {
   pinMode: 'create',     // 'create' | 'confirm' | 'enter'
   pinBuffer: '',
   pinConfirmBuffer: '',
+  pinFirst: '',          // holds first PIN entry while confirm mode is active
 };
 
 // ═══════════════════════════════════════════════
@@ -815,12 +816,15 @@ function pinKey(digit) {
     if (buf.length === 4) {
       setTimeout(() => {
         if (state.pinMode === 'create') {
+          // Save the first PIN before switching mode (startPinFlow resets buffers)
+          state.pinFirst = state.pinBuffer;
           startPinFlow('confirm');
         } else {
-          if (state.pinBuffer === state.pinConfirmBuffer) {
-            finishPinCreate(state.pinBuffer);
+          if (state.pinFirst === state.pinConfirmBuffer) {
+            finishPinCreate(state.pinFirst);
           } else {
             document.getElementById('pin-error').textContent = "PINs don't match. Try again.";
+            state.pinFirst = '';
             state.pinBuffer = '';
             state.pinConfirmBuffer = '';
             setTimeout(() => startPinFlow('create'), 800);
