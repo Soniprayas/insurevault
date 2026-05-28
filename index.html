@@ -830,11 +830,12 @@ function pinKey(digit) {
     }
   } else {
     // enter mode
-    if (state.pinBuffer.length >= 4) return;
-    state.pinBuffer += digit;
-    updatePinDots(state.pinBuffer.length);
     if (state.pinBuffer.length === 4) {
-      setTimeout(() => verifyPin(state.pinBuffer), 200);
+    const pin = state.pinBuffer;
+    setTimeout(async () => {
+    await verifyPin(pin);
+    state.pinBuffer = '';   // IMPORTANT RESET
+     }, 200);
     }
   }
 }
@@ -864,37 +865,30 @@ async function finishPinCreate(pin) {
 
 async function verifyPin(pin) {
   const hash = await sha256(pin);
+
   state.pinBuffer = '';
   updatePinDots(0);
-  if (sessionStorage.getItem('iv_pinhash') === hash) {
+
+  showLoading('Checking PIN…');
+
+  try {
+    // ALWAYS try decrypt first (this is the real truth source)
     await deriveCryptoKey(pin);
+    await loadAndDecryptData();
+
+    // If decrypt works → PIN is correct
+    state.pinHash = hash;
+    sessionStorage.setItem('iv_pinhash', hash);
     sessionStorage.setItem('iv_pin_raw', pin);
-    showLoading('Decrypting vault…');
-    try {
-      await loadAndDecryptData();
-      hideLoading();
-      renderDashboard();
-      showScreen('screen-dash');
-    } catch(e) {
-      hideLoading();
-      document.getElementById('pin-error').textContent = 'Wrong PIN or corrupted data.';
-    }
-  } else {
-    // No cached hash — try to decrypt
-    showLoading('Checking PIN…');
-    await deriveCryptoKey(pin);
-    try {
-      await loadAndDecryptData();
-      state.pinHash = hash;
-      sessionStorage.setItem('iv_pinhash', hash);
-      sessionStorage.setItem('iv_pin_raw', pin);
-      hideLoading();
-      renderDashboard();
-      showScreen('screen-dash');
-    } catch(e) {
-      hideLoading();
-      state.cryptoKey = null;
-      document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
+
+    hideLoading();
+    renderDashboard();
+    showScreen('screen-dash');
+
+  } catch (e) {
+    hideLoading();
+    state.cryptoKey = null;
+    document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
     }
   }
 }
