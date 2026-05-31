@@ -14,26 +14,26 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
-    --bg: #0f2942;
-    --bg2: #162f4a;
-    --bg3: #1c3a57;
-    --card: #1e3f5e;
-    --card2: #243f5a;
-    --accent: #3d8ef0;
-    --accent2: #5ba0f5;
-    --accent-light: #1a3d6e;
-    --green: #2ecc71;
-    --green-dim: #1a4a30;
-    --red: #e74c3c;
-    --red-dim: #4a1a1a;
-    --amber: #f39c12;
-    --amber-dim: #4a3010;
-    --text: #e8f0fe;
-    --text2: #8db4d9;
-    --text3: #5a82a6;
-    --border: rgba(61,142,240,0.18);
-    --border2: rgba(61,142,240,0.30);
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --bg: #f0f4f8;
+    --bg2: #ffffff;
+    --bg3: #e8edf3;
+    --card: #ffffff;
+    --card2: #f5f8fc;
+    --accent: #1a6fd4;
+    --accent2: #1558b0;
+    --accent-light: #ddeeff;
+    --green: #16a34a;
+    --green-dim: #dcfce7;
+    --red: #dc2626;
+    --red-dim: #fee2e2;
+    --amber: #d97706;
+    --amber-dim: #fef3c7;
+    --text: #0f1c2e;
+    --text2: #3a5275;
+    --text3: #7a94b0;
+    --border: rgba(26,111,212,0.14);
+    --border2: rgba(26,111,212,0.26);
+    --shadow: 0 2px 16px rgba(15,28,46,0.10);
     --radius: 14px;
     --radius-sm: 9px;
     --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -52,6 +52,7 @@
     padding: 14px 18px 12px;
     display: flex; align-items: center; gap: 12px;
     flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(15,28,46,0.07);
   }
   .topbar-back {
     width: 36px; height: 36px; border-radius: 50%;
@@ -60,8 +61,8 @@
     cursor: pointer; color: var(--accent2); flex-shrink: 0;
   }
   .topbar-title { flex: 1; }
-  .topbar-title h1 { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.2; }
-  .topbar-title p { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .topbar-title h1 { font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .topbar-title p { font-size: 13px; color: var(--text3); margin-top: 1px; }
   .topbar-action { background: none; border: none; color: var(--accent2); cursor: pointer; padding: 6px; border-radius: 8px; }
 
   /* ── SCROLL BODY ── */
@@ -73,9 +74,9 @@
   #screen-login { justify-content: center; align-items: center; padding: 32px 24px; background: var(--bg); }
   .login-logo {
     width: 80px; height: 80px; border-radius: 22px;
-    background: linear-gradient(135deg, var(--accent), #1a5ab8);
+    background: linear-gradient(135deg, var(--accent), #0e3ea8);
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px; box-shadow: 0 8px 32px rgba(61,142,240,0.35);
+    margin-bottom: 24px; box-shadow: 0 8px 32px rgba(26,111,212,0.3);
   }
   .login-logo svg { width: 44px; height: 44px; }
   .login-card {
@@ -83,23 +84,23 @@
     border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 380px;
     text-align: center; box-shadow: var(--shadow);
   }
-  .login-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-  .login-card p { color: var(--text2); font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+  .login-card h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+  .login-card p { color: var(--text2); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
   .btn-google {
     width: 100%; padding: 14px; border-radius: var(--radius-sm);
-    background: #fff; color: #1f1f1f; border: none;
-    font-size: 15px; font-weight: 600; cursor: pointer;
+    background: #fff; color: #1f1f1f; border: 1px solid #dadce0;
+    font-size: 16px; font-weight: 600; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    transition: opacity 0.15s;
+    transition: background 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   }
-  .btn-google:hover { opacity: 0.9; }
-  .login-note { font-size: 12px; color: var(--text3); margin-top: 18px; line-height: 1.6; }
+  .btn-google:hover { background: #f8f9fa; }
+  .login-note { font-size: 13px; color: var(--text3); margin-top: 18px; line-height: 1.6; }
 
   /* ── PIN SCREEN ── */
-  #screen-pin { justify-content: center; align-items: center; padding: 32px 24px; }
-  .pin-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 360px; text-align: center; }
-  .pin-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  .pin-card p { color: var(--text2); font-size: 13px; margin-bottom: 24px; line-height: 1.5; }
+  #screen-pin { justify-content: center; align-items: center; padding: 32px 24px; background: var(--bg); }
+  .pin-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 360px; text-align: center; box-shadow: var(--shadow); }
+  .pin-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .pin-card p { color: var(--text2); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
   .pin-dots { display: flex; justify-content: center; gap: 14px; margin-bottom: 24px; }
   .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text3); transition: all 0.2s; }
   .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
@@ -107,17 +108,17 @@
   .pin-key {
     background: var(--bg3); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 18px;
-    font-size: 20px; font-weight: 600; cursor: pointer;
+    font-size: 22px; font-weight: 700; cursor: pointer;
     color: var(--text); transition: background 0.1s, transform 0.1s;
     user-select: none;
   }
   .pin-key:active { background: var(--accent-light); transform: scale(0.95); }
-  .pin-key.del { font-size: 16px; color: var(--text2); }
-  .pin-error { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .pin-key.del { font-size: 18px; color: var(--text2); }
+  .pin-error { color: var(--red); font-size: 14px; margin-top: 12px; min-height: 18px; }
 
   /* ── DASHBOARD ── */
   .section-label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
     color: var(--text3); text-transform: uppercase; margin: 18px 0 10px;
   }
   .section-label:first-child { margin-top: 4px; }
@@ -125,18 +126,19 @@
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 14px 16px;
     display: flex; align-items: center; gap: 14px;
-    margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
     text-decoration: none; color: inherit;
+    box-shadow: 0 1px 4px rgba(15,28,46,0.06);
   }
-  .plan-card:active { background: var(--card2); border-color: var(--border2); }
+  .plan-card:active { background: var(--card2); border-color: var(--border2); box-shadow: 0 2px 8px rgba(15,28,46,0.10); }
   .plan-icon {
-    width: 44px; height: 44px; border-radius: 12px;
+    width: 46px; height: 46px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; flex-shrink: 0;
   }
   .plan-info { flex: 1; min-width: 0; }
-  .plan-name { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .plan-type { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .plan-name { font-size: 16px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .plan-type { font-size: 13px; color: var(--text3); margin-top: 2px; }
   .plan-arrow { color: var(--text3); flex-shrink: 0; }
   .fab {
     position: fixed; bottom: 28px; right: 20px;
@@ -155,11 +157,31 @@
 
   /* ── DETAIL SCREEN ── */
   .id-card-container {
-    background: linear-gradient(135deg, #0f2942 0%, #1a5ab8 50%, #0e3460 100%);
+    background: linear-gradient(135deg, #1a4a8a 0%, #1a6fd4 50%, #0e3460 100%);
     border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
-    border: 1px solid rgba(61,142,240,0.3); position: relative; overflow: hidden;
+    border: 1px solid rgba(26,111,212,0.3); position: relative; overflow: hidden;
     min-height: 160px;
   }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex; border-bottom: 2px solid var(--border);
+    background: var(--bg2); flex-shrink: 0;
+    padding: 0 16px;
+  }
+  .tab-btn {
+    flex: 1; padding: 13px 8px; font-size: 15px; font-weight: 600;
+    border: none; background: none; cursor: pointer;
+    color: var(--text3); position: relative; transition: color 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .tab-btn.active { color: var(--accent); }
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px;
+    background: var(--accent); border-radius: 2px 2px 0 0;
+  }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
   .id-card-container::before {
     content: ''; position: absolute; top: -30px; right: -30px;
     width: 120px; height: 120px; border-radius: 50%;
@@ -173,14 +195,14 @@
   .id-card-pdf svg { margin-bottom: 8px; }
   .id-card-pdf p { font-size: 14px; color: var(--text2); }
 
-  .cred-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; }
+  .cred-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(15,28,46,0.05); }
   .cred-row {
     display: flex; align-items: center; gap: 12px;
     padding: 14px 16px; border-bottom: 1px solid var(--border);
   }
   .cred-row:last-child { border-bottom: none; }
-  .cred-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
-  .cred-value { font-size: 14px; font-weight: 500; color: var(--text); font-family: monospace; }
+  .cred-label { font-size: 12px; color: var(--text3); margin-bottom: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cred-value { font-size: 15px; font-weight: 600; color: var(--text); font-family: monospace; }
   .cred-copy {
     background: var(--accent-light); border: none; border-radius: 8px;
     width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
@@ -191,19 +213,18 @@
   .action-btn {
     width: 100%; padding: 14px; border-radius: var(--radius-sm);
     background: var(--card); border: 1px solid var(--border);
-    color: var(--text); font-size: 14px; font-weight: 500;
+    color: var(--text); font-size: 15px; font-weight: 600;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     margin-bottom: 10px; transition: background 0.15s, border-color 0.15s;
   }
   .action-btn:active { background: var(--card2); border-color: var(--border2); }
   .action-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .action-btn.danger { color: var(--red); border-color: var(--red-dim); }
+  .action-btn.danger { color: var(--red); border-color: var(--red-dim); background: var(--red-dim); }
   .action-btn svg { flex-shrink: 0; }
 
-  /* ── MODAL / SHEET ── */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.65); z-index: 200;
+    background: rgba(15,28,46,0.45); z-index: 200;
     align-items: flex-end; justify-content: center;
   }
   .modal-overlay.open { display: flex; }
@@ -212,22 +233,23 @@
     width: 100%; max-width: 500px; padding: 24px;
     max-height: 90dvh; max-height: 90vh; overflow-y: auto;
     border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 32px rgba(15,28,46,0.12);
   }
   .modal-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 20px; }
-  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; color: var(--text); }
 
   .field-group { margin-bottom: 16px; }
-  .field-label { font-size: 12px; color: var(--text3); font-weight: 500; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field-label { font-size: 12px; color: var(--text3); font-weight: 600; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
   .field-input {
-    width: 100%; padding: 12px 14px; background: var(--bg3);
+    width: 100%; padding: 13px 14px; background: var(--bg3);
     border: 1px solid var(--border); border-radius: var(--radius-sm);
-    color: var(--text); font-size: 15px; outline: none;
+    color: var(--text); font-size: 16px; outline: none;
     transition: border-color 0.15s;
   }
-  .field-input:focus { border-color: var(--accent); }
+  .field-input:focus { border-color: var(--accent); background: #fff; }
   .field-input::placeholder { color: var(--text3); }
   select.field-input { cursor: pointer; }
-  select.field-input option { background: var(--bg3); }
+  select.field-input option { background: #fff; color: var(--text); }
 
   .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
   .emoji-btn {
@@ -240,9 +262,9 @@
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--card); border: 1px solid var(--border2);
+    background: #0f1c2e; border: 1px solid rgba(255,255,255,0.1);
     border-radius: 100px; padding: 10px 20px;
-    font-size: 13px; color: var(--text); white-space: nowrap;
+    font-size: 14px; color: #fff; white-space: nowrap;
     z-index: 9999; opacity: 0; transition: all 0.3s;
     display: flex; align-items: center; gap: 8px;
     box-shadow: var(--shadow);
@@ -251,9 +273,9 @@
 
   /* ── NOTE CARDS ── */
   .info-banner {
-    background: var(--accent-light); border: 1px solid rgba(61,142,240,0.3);
+    background: var(--accent-light); border: 1px solid rgba(26,111,212,0.25);
     border-radius: var(--radius-sm); padding: 12px 14px;
-    font-size: 13px; color: var(--accent2); line-height: 1.5;
+    font-size: 14px; color: var(--accent2); line-height: 1.5;
     display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px;
   }
   .info-banner svg { flex-shrink: 0; margin-top: 1px; }
@@ -281,8 +303,8 @@
   /* loading */
   .spinner { width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-overlay { position: fixed; inset: 0; background: rgba(15,41,66,0.85); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
-  .loading-overlay p { color: var(--text2); font-size: 14px; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(240,244,248,0.88); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .loading-overlay p { color: var(--text2); font-size: 15px; font-weight: 500; }
 
   /* Animations */
   @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -376,21 +398,42 @@
 <div id="screen-dash" class="screen">
   <div class="topbar">
     <div class="topbar-title">
-      <h1>InsureVault</h1>
+      <h1>VaultKey</h1>
       <p id="dash-sub">Loading…</p>
     </div>
     <button class="topbar-action" title="Sign out" onclick="signOut()">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     </button>
   </div>
-  <div class="scroll-body" id="dash-body">
-    <div class="empty-state" id="dash-empty" style="display:none;">
-      <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-      <p>No insurance plans yet.<br>Tap <strong>+</strong> to add your first plan.</p>
-    </div>
-    <div id="plans-list"></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-btn-insurance" onclick="switchTab('insurance')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Health & Insurance
+    </button>
+    <button class="tab-btn" id="tab-btn-apps" onclick="switchTab('apps')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      App Passwords
+    </button>
   </div>
-  <button class="fab" onclick="openAddModal()" aria-label="Add plan">+</button>
+  <div class="scroll-body">
+    <!-- Insurance Tab -->
+    <div id="tab-insurance" class="tab-pane active">
+      <div class="empty-state" id="dash-empty" style="display:none;">
+        <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <p>No insurance plans yet.<br>Tap <strong>+</strong> to add your first plan.</p>
+      </div>
+      <div id="plans-list"></div>
+    </div>
+    <!-- App Passwords Tab -->
+    <div id="tab-apps" class="tab-pane">
+      <div class="empty-state" id="apps-empty" style="display:none;">
+        <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <p>No app credentials yet.<br>Tap <strong>+</strong> to add your first entry.</p>
+      </div>
+      <div id="apps-list"></div>
+    </div>
+  </div>
+  <button class="fab" onclick="openAddModalForTab()" aria-label="Add">+</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════
@@ -398,7 +441,7 @@
 ═══════════════════════════════════════════════ -->
 <div id="screen-detail" class="screen">
   <div class="topbar">
-    <button class="topbar-back" onclick="showScreen('screen-dash')" aria-label="Back">
+    <button class="topbar-back" onclick="goBackToDash()" aria-label="Back">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div class="topbar-title">
@@ -443,7 +486,7 @@
 
     <div class="field-group">
       <label class="field-label">Plan / Provider Name</label>
-      <input class="field-input" id="f-name" placeholder="e.g. BCBS Blue Advantage" autocomplete="off">
+      <input class="field-input" id="f-name" placeholder="Type plan or provider name…" autocomplete="off">
     </div>
     <div class="field-group">
       <label class="field-label">Category</label>
@@ -499,6 +542,48 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════
+     MODAL: ADD / EDIT APP CREDENTIAL
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-app" onclick="closeModalIfBg(event,'modal-app')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-app-title">Add App Credential</div>
+
+    <div class="field-group">
+      <label class="field-label">App / Service Name</label>
+      <input class="field-input" id="a-name" placeholder="Type app name…" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Username / Email</label>
+      <input class="field-input" id="a-user" placeholder="your@email.com or username" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Password</label>
+      <div style="position:relative;">
+        <input class="field-input" id="a-pass" type="password" placeholder="Password" autocomplete="off" style="padding-right:44px;">
+        <button class="pw-toggle" onclick="togglePw('a-pass',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">
+          <svg id="eye-a-pass" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Website / App URL (optional)</label>
+      <input class="field-input" id="a-url" placeholder="https://…" type="url" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Notes (optional)</label>
+      <textarea class="field-input" id="a-notes" rows="3" placeholder="Account number, security PIN, hints…"></textarea>
+    </div>
+
+    <button class="action-btn primary" onclick="saveApp()" style="margin-top:8px;">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      Save Credential
+    </button>
+    <button class="action-btn" onclick="closeModal('modal-app')">Cancel</button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -533,10 +618,13 @@ let state = {
   pinHash: null,         // SHA-256 of PIN stored in sessionStorage
   cryptoKey: null,       // AES-GCM CryptoKey derived from PIN
   plans: [],             // decrypted plan objects
+  apps: [],              // app credentials
   folderId: null,
   dataFileId: null,
   editingPlanId: null,
+  editingAppId: null,
   currentPlanId: null,
+  currentTab: 'insurance',
   pinMode: 'create',     // 'create' | 'confirm' | 'enter'
   pinBuffer: '',
   pinConfirmBuffer: '',
@@ -650,7 +738,8 @@ async function checkDataFileExists() {
 }
 
 async function saveDataToDrive() {
-  const encrypted = await encryptData(JSON.stringify(state.plans));
+  const payload = { plans: state.plans, apps: state.apps || [] };
+  const encrypted = await encryptData(JSON.stringify(payload));
   const meta = { name: CONFIG.DATA_FILE, parents: state.dataFileId ? undefined : [state.folderId] };
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
@@ -683,7 +772,15 @@ async function loadAndDecryptData() {
   if (!res.ok) throw new Error('Could not load vault data');
   const buf = await res.arrayBuffer();
   const json = await decryptData(buf);
-  state.plans = JSON.parse(json);
+  const parsed = JSON.parse(json);
+  // Support old format (plain array) and new format ({ plans, apps })
+  if (Array.isArray(parsed)) {
+    state.plans = parsed;
+    state.apps = [];
+  } else {
+    state.plans = parsed.plans || [];
+    state.apps = parsed.apps || [];
+  }
 }
 
 // Upload a card image/PDF to Drive, returns file ID
@@ -861,6 +958,7 @@ async function finishPinCreate(pin) {
   sessionStorage.setItem('iv_pinhash', state.pinHash);
   sessionStorage.setItem('iv_pin_raw', pin);
   state.plans = [];
+  state.apps = [];
   await saveDataToDrive();
   hideLoading();
   renderDashboard();
@@ -909,42 +1007,79 @@ const TYPE_META = {
   other:    { label: 'Other',             emoji: '📋', tagClass: 'tag-other' },
 };
 
+function switchTab(tab) {
+  state.currentTab = tab;
+  document.getElementById('tab-btn-insurance').classList.toggle('active', tab === 'insurance');
+  document.getElementById('tab-btn-apps').classList.toggle('active', tab === 'apps');
+  document.getElementById('tab-insurance').classList.toggle('active', tab === 'insurance');
+  document.getElementById('tab-apps').classList.toggle('active', tab === 'apps');
+}
+
+function openAddModalForTab() {
+  if (state.currentTab === 'apps') openAddAppModal();
+  else openAddModal();
+}
+
 function renderDashboard() {
   const user = sessionStorage.getItem('iv_user') || '';
-  document.getElementById('dash-sub').textContent = state.plans.length
-    ? `${state.plans.length} plan${state.plans.length > 1 ? 's' : ''} · ${user}`
+  const total = (state.plans.length) + (state.apps ? state.apps.length : 0);
+  document.getElementById('dash-sub').textContent = total
+    ? `${total} entr${total !== 1 ? 'ies' : 'y'} · ${user}`
     : user;
 
+  // Render insurance plans
   const list = document.getElementById('plans-list');
   const empty = document.getElementById('dash-empty');
-  if (state.plans.length === 0) { list.innerHTML = ''; empty.style.display = ''; return; }
-  empty.style.display = 'none';
-
-  // Group by type
-  const groups = {};
-  state.plans.forEach(p => {
-    if (!groups[p.type]) groups[p.type] = [];
-    groups[p.type].push(p);
-  });
-
-  const order = ['health','dental','vision','pharmacy','life','auto','other'];
-  let html = '';
-  order.forEach(type => {
-    if (!groups[type]) return;
-    const meta = TYPE_META[type];
-    html += `<div class="section-label">${meta.label}</div>`;
-    groups[type].forEach((p, i) => {
-      html += `<div class="plan-card" onclick="openDetail('${p.id}')" style="animation-delay:${i*0.04}s">
-        <div class="plan-icon" style="background:rgba(255,255,255,0.07)">${meta.emoji}</div>
-        <div class="plan-info">
-          <div class="plan-name">${esc(p.name)}</div>
-          <div class="plan-type">${p.memberid ? 'ID: ' + esc(p.memberid) : (p.url ? esc(p.url.replace(/^https?:\/\//,'')) : 'No URL set')}</div>
-        </div>
-        <svg class="plan-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>`;
+  if (state.plans.length === 0) { list.innerHTML = ''; empty.style.display = ''; }
+  else {
+    empty.style.display = 'none';
+    const groups = {};
+    state.plans.forEach(p => {
+      if (!groups[p.type]) groups[p.type] = [];
+      groups[p.type].push(p);
     });
+    const order = ['health','dental','vision','pharmacy','life','auto','other'];
+    let html = '';
+    order.forEach(type => {
+      if (!groups[type]) return;
+      const meta = TYPE_META[type];
+      html += `<div class="section-label">${meta.label}</div>`;
+      groups[type].forEach((p, i) => {
+        html += `<div class="plan-card" onclick="openDetail('${p.id}')" style="animation-delay:${i*0.04}s">
+          <div class="plan-icon" style="background:var(--accent-light)">${meta.emoji}</div>
+          <div class="plan-info">
+            <div class="plan-name">${esc(p.name)}</div>
+            <div class="plan-type">${p.memberid ? 'ID: ' + esc(p.memberid) : (p.url ? esc(p.url.replace(/^https?:\/\//,'')) : 'No URL set')}</div>
+          </div>
+          <svg class="plan-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>`;
+      });
+    });
+    list.innerHTML = html;
+  }
+
+  // Render app credentials
+  renderAppsList();
+}
+
+function renderAppsList() {
+  const apps = state.apps || [];
+  const listEl = document.getElementById('apps-list');
+  const emptyEl = document.getElementById('apps-empty');
+  if (apps.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = ''; return; }
+  emptyEl.style.display = 'none';
+  let html = '<div class="section-label">Saved Apps & Services</div>';
+  apps.forEach((a, i) => {
+    html += `<div class="plan-card" onclick="openAppDetail('${a.id}')" style="animation-delay:${i*0.04}s">
+      <div class="plan-icon" style="background:var(--accent-light);font-size:20px">🔑</div>
+      <div class="plan-info">
+        <div class="plan-name">${esc(a.name)}</div>
+        <div class="plan-type">${a.username ? esc(a.username) : (a.url ? esc(a.url.replace(/^https?:\/\//,'')) : 'No username')}</div>
+      </div>
+      <svg class="plan-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`;
   });
-  list.innerHTML = html;
+  listEl.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════
@@ -954,10 +1089,12 @@ async function openDetail(planId) {
   const plan = state.plans.find(p => p.id === planId);
   if (!plan) return;
   state.currentPlanId = planId;
+  state.currentAppId = null;
   const meta = TYPE_META[plan.type] || TYPE_META.other;
 
   document.getElementById('detail-name').textContent = plan.name;
   document.getElementById('detail-type').textContent = meta.label;
+  document.querySelector('#screen-detail .topbar-action').setAttribute('onclick', 'editCurrentPlan()');
 
   const body = document.getElementById('detail-body');
   body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:80px"><div class="spinner"></div></div>`;
@@ -1114,6 +1251,7 @@ async function deletePlan(planId) {
   hideLoading();
   showToast('Plan deleted');
   renderDashboard();
+  switchTab('insurance');
   showScreen('screen-dash');
 }
 
@@ -1383,6 +1521,141 @@ function showLoading(msg) {
   document.getElementById('loading').style.display = 'flex';
 }
 function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+// ═══════════════════════════════════════════════
+// APP CREDENTIALS
+// ═══════════════════════════════════════════════
+function openAddAppModal() {
+  state.editingAppId = null;
+  document.getElementById('modal-app-title').textContent = 'Add App Credential';
+  ['a-name','a-user','a-pass','a-url','a-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('a-pass').type = 'password';
+  document.getElementById('modal-app').classList.add('open');
+}
+
+function editCurrentApp(appId) {
+  const app = (state.apps || []).find(a => a.id === appId);
+  if (!app) return;
+  state.editingAppId = app.id;
+  document.getElementById('modal-app-title').textContent = 'Edit Credential';
+  document.getElementById('a-name').value = app.name || '';
+  document.getElementById('a-user').value = app.username || '';
+  document.getElementById('a-pass').value = app.password || '';
+  document.getElementById('a-pass').type = 'password';
+  document.getElementById('a-url').value = app.url || '';
+  document.getElementById('a-notes').value = app.notes || '';
+  document.getElementById('modal-app').classList.add('open');
+}
+
+async function saveApp() {
+  const name = document.getElementById('a-name').value.trim();
+  if (!name) { showToast('Please enter an app name'); return; }
+  const isEditing = !!state.editingAppId;
+  const app = {
+    id: state.editingAppId || 'a_' + Date.now(),
+    name,
+    username: document.getElementById('a-user').value.trim(),
+    password: document.getElementById('a-pass').value,
+    url: document.getElementById('a-url').value.trim(),
+    notes: document.getElementById('a-notes').value.trim(),
+  };
+  if (!state.apps) state.apps = [];
+  if (isEditing) {
+    state.apps = state.apps.map(a => a.id === state.editingAppId ? app : a);
+  } else {
+    state.apps.push(app);
+  }
+  closeModal('modal-app');
+  showLoading('Saving…');
+  await saveDataToDrive();
+  hideLoading();
+  showToast(isEditing ? '✅ Credential updated' : '✅ Credential saved');
+  renderDashboard();
+  if (isEditing) openAppDetail(app.id);
+}
+
+function openAppDetail(appId) {
+  const app = (state.apps || []).find(a => a.id === appId);
+  if (!app) return;
+  state.currentAppId = appId;
+
+  document.getElementById('detail-name').textContent = app.name;
+  document.getElementById('detail-type').textContent = 'App / Service';
+
+  // Override edit button for app detail
+  document.querySelector('#screen-detail .topbar-action').setAttribute('onclick', `editCurrentApp('${appId}')`);
+
+  const body = document.getElementById('detail-body');
+  const hasPass = !!app.password;
+
+  body.innerHTML = `
+    <div style="padding:16px">
+      <div class="section-label" style="margin-top:4px">Login Credentials</div>
+      <div class="cred-section">
+        ${app.username ? `
+        <div class="cred-row">
+          <div style="flex:1"><div class="cred-label">Username / Email</div><div class="cred-value">${esc(app.username)}</div></div>
+          <button class="cred-copy" onclick="copyText('${esc(app.username)}','Username copied')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : ''}
+        ${hasPass ? `
+        <div class="cred-row">
+          <div style="flex:1"><div class="cred-label">Password</div><div class="cred-value" id="apw-display-${appId}">••••••••••</div></div>
+          <button class="cred-copy" onclick="toggleAppPwDisplay('${appId}','${esc(app.password)}')" title="Show/hide">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="cred-copy" onclick="copyText('${esc(app.password)}','Password copied')" title="Copy">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : ''}
+        ${!app.username && !hasPass ? '<div class="cred-row"><div style="color:var(--text3);font-size:14px">No credentials saved</div></div>' : ''}
+      </div>
+
+      ${app.url ? `
+      <div class="section-label">Website</div>
+      <a href="${esc(app.url)}" target="_blank" class="action-btn" style="text-decoration:none;color:var(--accent2)">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Open ${esc(app.name)}
+      </a>` : ''}
+
+      ${app.notes ? `
+      <div class="section-label">Notes</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:15px;color:var(--text2);line-height:1.6;white-space:pre-wrap;">${esc(app.notes)}</div>` : ''}
+
+      <div style="margin-top:24px">
+        <button class="action-btn danger" onclick="deleteApp('${appId}')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete Credential
+        </button>
+      </div>
+    </div>
+  `;
+  showScreen('screen-detail');
+}
+
+function toggleAppPwDisplay(appId, pw) {
+  const el = document.getElementById('apw-display-' + appId);
+  el.textContent = el.textContent !== '••••••••••' ? '••••••••••' : pw;
+}
+
+async function deleteApp(appId) {
+  if (!confirm('Delete this credential? This cannot be undone.')) return;
+  state.apps = (state.apps || []).filter(a => a.id !== appId);
+  showLoading('Saving…');
+  await saveDataToDrive();
+  hideLoading();
+  showToast('Credential deleted');
+  renderDashboard();
+  switchTab('apps');
+  showScreen('screen-dash');
+}
+
+function goBackToDash() {
+  // If came from app detail, restore apps tab
+  if (state.currentAppId) switchTab('apps');
+  showScreen('screen-dash');
+}
 
 // Register service worker for offline/PWA
 if ('serviceWorker' in navigator) {
