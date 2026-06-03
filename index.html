@@ -280,7 +280,39 @@
   }
   .info-banner svg { flex-shrink: 0; margin-top: 1px; }
 
-  .pw-toggle {
+  /* ── DOCUMENT ROWS ── */
+  .doc-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .doc-row:last-child { border-bottom: none; }
+  .doc-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--accent-light); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; color: var(--accent2);
+  }
+  .doc-info { flex: 1; min-width: 0; }
+  .doc-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .doc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .doc-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg3); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text2); transition: background 0.15s;
+  }
+  .doc-btn:active { background: var(--accent-light); color: var(--accent2); }
+  .doc-btn.danger:active { background: var(--red-dim); color: var(--red); }
+  .doc-upload-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px; border-radius: var(--radius-sm);
+    border: 2px dashed var(--border2); background: var(--bg3);
+    color: var(--accent2); font-size: 14px; font-weight: 600;
+    cursor: pointer; width: 100%; justify-content: center;
+    transition: border-color 0.15s, background 0.15s; margin-top: 8px;
+  }
+  .doc-upload-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+  .doc-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(15,28,46,0.05); }
     background: none; border: none; cursor: pointer; color: var(--text3);
     padding: 0; display: flex; align-items: center;
   }
@@ -1100,48 +1132,50 @@ async function openDetail(planId) {
   body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:80px"><div class="spinner"></div></div>`;
   showScreen('screen-detail');
 
-  // Build HTML
-  let cardHTML = '';
-  if (plan.cardFileId) {
-    try {
-      const dataURL = await loadCardAsDataURL(plan.cardFileId);
-      const isImg = dataURL.startsWith('data:image');
-      if (isImg) {
-        cardHTML = `<img class="id-card-img" src="${dataURL}" alt="Insurance ID Card">`;
-      } else {
-        cardHTML = `<div class="id-card-pdf">
-          <svg width="40" height="40" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          <p>${esc(plan.cardFileName || 'Insurance Card')}</p>
-        </div>`;
-      }
-    } catch(e) {
-      cardHTML = `<div class="id-card-placeholder"><p>Could not load card</p></div>`;
-    }
+  // Build docs HTML — compact rows, no preview
+  const docs = plan.docs || (plan.cardFileId ? [{ id: plan.cardFileId, name: plan.cardFileName || 'Insurance Card', type: 'card' }] : []);
+  function docIcon(name) {
+    const ext = (name || '').split('.').pop().toLowerCase();
+    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+    if (ext === 'pdf') return `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+    return `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`;
+  }
+  let docsHTML = '';
+  if (docs.length > 0) {
+    docsHTML = docs.map(doc => `
+      <div class="doc-row" id="docrow-${doc.id}">
+        <div class="doc-icon">${docIcon(doc.name)}</div>
+        <div class="doc-info">
+          <div class="doc-name">${esc(doc.name)}</div>
+          <div class="doc-meta">Stored in Google Drive</div>
+        </div>
+        <div class="doc-actions">
+          <button class="doc-btn" title="Download" onclick="downloadPlanDoc('${planId}','${doc.id}','${esc(doc.name)}')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="doc-btn" title="Share" onclick="sharePlanDoc('${doc.id}','${esc(doc.name)}')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <button class="doc-btn danger" title="Delete" onclick="deletePlanDoc('${planId}','${doc.id}')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+      </div>`).join('');
   } else {
-    cardHTML = `<div class="id-card-placeholder">
-      <svg width="36" height="36" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      <p>No ID card uploaded</p>
-    </div>`;
+    docsHTML = `<div class="doc-row"><div style="color:var(--text3);font-size:14px;padding:4px 0">No documents uploaded yet</div></div>`;
   }
 
   const hasPass = !!plan.password;
   body.innerHTML = `
     <div style="padding:16px">
 
-      <div class="section-label" style="margin-top:4px">Insurance ID Card</div>
-      <div class="id-card-container">${cardHTML}</div>
-      <div class="card-overlay-btns">
-        ${plan.cardFileId ? `
-          <button class="action-btn" style="flex:1;margin:0" onclick="downloadCard('${planId}')">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download
-          </button>` : ''}
-        <label class="action-btn" style="flex:1;margin:0;cursor:pointer">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          ${plan.cardFileId ? 'Replace' : 'Upload'} Card
-          <input type="file" accept="image/*,application/pdf" style="display:none" onchange="handleCardUpload(event,'${planId}')">
-        </label>
-      </div>
+      <div class="section-label" style="margin-top:4px">Documents</div>
+      <div class="doc-section">${docsHTML}</div>
+      <label class="doc-upload-btn">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload Document
+        <input type="file" accept="image/*,application/pdf,.doc,.docx" style="display:none" onchange="handlePlanDocUpload(event,'${planId}')">
+      </label>
 
       <div class="section-label">Login Credentials</div>
       <div class="cred-section">
@@ -1206,44 +1240,113 @@ function togglePwDisplay(planId, pw) {
   el.textContent = showing ? '••••••••••' : pw;
 }
 
-async function handleCardUpload(event, planId) {
+// ═══════════════════════════════════════════════
+// DOCUMENT UPLOAD / DOWNLOAD (PLAN)
+// ═══════════════════════════════════════════════
+async function handlePlanDocUpload(event, planId) {
   const file = event.target.files[0];
   if (!file) return;
-  showLoading('Uploading ID card…');
+  showLoading('Uploading document…');
   try {
     const fileId = await uploadCardFile(planId, file);
     const plan = state.plans.find(p => p.id === planId);
-    plan.cardFileId = fileId;
-    plan.cardFileName = file.name;
+    if (!plan.docs) plan.docs = [];
+    // Migrate legacy single card
+    if (plan.cardFileId && !plan.docs.find(d => d.id === plan.cardFileId)) {
+      plan.docs.unshift({ id: plan.cardFileId, name: plan.cardFileName || 'Insurance Card' });
+      delete plan.cardFileId; delete plan.cardFileName;
+    }
+    plan.docs.push({ id: fileId, name: file.name });
     await saveDataToDrive();
     hideLoading();
-    showToast('✅ ID card uploaded');
+    showToast('✅ Document uploaded');
     openDetail(planId);
-  } catch(e) {
-    hideLoading();
-    showToast('Upload failed: ' + e.message);
-  }
+  } catch(e) { hideLoading(); showToast('Upload failed: ' + e.message); }
 }
 
-async function downloadCard(planId) {
-  const plan = state.plans.find(p => p.id === planId);
-  if (!plan || !plan.cardFileId) return;
+async function downloadPlanDoc(planId, fileId, fileName) {
   showLoading('Downloading…');
+  try { await downloadCardFile(fileId, fileName); hideLoading(); showToast('✅ Downloaded'); }
+  catch(e) { hideLoading(); showToast('Download failed: ' + e.message); }
+}
+
+async function sharePlanDoc(fileId, fileName) { shareDoc(fileId, fileName); }
+
+async function deletePlanDoc(planId, fileId) {
+  if (!confirm('Remove this document?')) return;
+  showLoading('Removing…');
   try {
-    await downloadCardFile(plan.cardFileId, plan.cardFileName || 'insurance_card');
+    await driveRequest(`/files/${fileId}`, 'DELETE').catch(() => {});
+    const plan = state.plans.find(p => p.id === planId);
+    plan.docs = (plan.docs || []).filter(d => d.id !== fileId);
+    await saveDataToDrive();
     hideLoading();
-    showToast('✅ Downloaded');
-  } catch(e) {
+    showToast('Document removed');
+    openDetail(planId);
+  } catch(e) { hideLoading(); showToast('Error: ' + e.message); }
+}
+
+// ═══════════════════════════════════════════════
+// DOCUMENT UPLOAD / DOWNLOAD (APP)
+// ═══════════════════════════════════════════════
+async function handleAppDocUpload(event, appId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showLoading('Uploading document…');
+  try {
+    const fileId = await uploadCardFile(appId, file);
+    const app = (state.apps || []).find(a => a.id === appId);
+    if (!app.docs) app.docs = [];
+    app.docs.push({ id: fileId, name: file.name });
+    await saveDataToDrive();
     hideLoading();
-    showToast('Download failed: ' + e.message);
+    showToast('✅ Document uploaded');
+    openAppDetail(appId);
+  } catch(e) { hideLoading(); showToast('Upload failed: ' + e.message); }
+}
+
+async function downloadAppDoc(appId, fileId, fileName) {
+  showLoading('Downloading…');
+  try { await downloadCardFile(fileId, fileName); hideLoading(); showToast('✅ Downloaded'); }
+  catch(e) { hideLoading(); showToast('Download failed: ' + e.message); }
+}
+
+async function deleteAppDoc(appId, fileId) {
+  if (!confirm('Remove this document?')) return;
+  showLoading('Removing…');
+  try {
+    await driveRequest(`/files/${fileId}`, 'DELETE').catch(() => {});
+    const app = (state.apps || []).find(a => a.id === appId);
+    app.docs = (app.docs || []).filter(d => d.id !== fileId);
+    await saveDataToDrive();
+    hideLoading();
+    showToast('Document removed');
+    openAppDetail(appId);
+  } catch(e) { hideLoading(); showToast('Error: ' + e.message); }
+}
+
+// Share via Web Share API or clipboard fallback
+async function shareDoc(fileId, fileName) {
+  const driveUrl = `https://drive.google.com/file/d/${fileId}/view`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: fileName, url: driveUrl });
+    } catch(e) { /* user cancelled */ }
+  } else {
+    await navigator.clipboard.writeText(driveUrl);
+    showToast('📋 Drive link copied');
   }
 }
 
 async function deletePlan(planId) {
   if (!confirm('Delete this plan? This cannot be undone.')) return;
   const plan = state.plans.find(p => p.id === planId);
-  if (plan && plan.cardFileId) {
-    await driveRequest(`/files/${plan.cardFileId}`, 'DELETE').catch(() => {});
+  if (plan) {
+    // Delete all attached docs from Drive
+    const allDocs = plan.docs || (plan.cardFileId ? [{ id: plan.cardFileId }] : []);
+    for (const doc of allDocs) {
+      await driveRequest(`/files/${doc.id}`, 'DELETE').catch(() => {});
+    }
   }
   state.plans = state.plans.filter(p => p.id !== planId);
   showLoading('Saving…');
@@ -1454,9 +1557,12 @@ async function savePlan() {
   };
   if (isEditing) {
     const existing = state.plans.find(p => p.id === state.editingPlanId);
-    if (existing) { plan.cardFileId = existing.cardFileId; plan.cardFileName = existing.cardFileName; }
+    if (existing) {
+      plan.docs = existing.docs || (existing.cardFileId ? [{ id: existing.cardFileId, name: existing.cardFileName || 'Insurance Card' }] : []);
+    }
     state.plans = state.plans.map(p => p.id === state.editingPlanId ? plan : p);
   } else {
+    plan.docs = [];
     state.plans.push(plan);
   }
   closeModal('modal-add');
@@ -1467,12 +1573,11 @@ async function savePlan() {
     try {
       const fileId = await uploadCardFile(plan.id, state.pendingCardFile);
       const target = state.plans.find(p => p.id === plan.id);
-      if (target) { target.cardFileId = fileId; target.cardFileName = state.pendingCardFile.name; }
-      plan.cardFileId = fileId;
-      plan.cardFileName = state.pendingCardFile.name;
-    } catch(e) {
-      showToast('Card upload failed: ' + e.message, 3000);
-    }
+      if (target) {
+        if (!target.docs) target.docs = [];
+        target.docs.push({ id: fileId, name: state.pendingCardFile.name });
+      }
+    } catch(e) { showToast('Card upload failed: ' + e.message, 3000); }
     state.pendingCardFile = null;
   }
 
@@ -1622,6 +1727,42 @@ function openAppDetail(appId) {
       ${app.notes ? `
       <div class="section-label">Notes</div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:15px;color:var(--text2);line-height:1.6;white-space:pre-wrap;">${esc(app.notes)}</div>` : ''}
+
+      <div class="section-label">Documents</div>
+      ${(() => {
+        const docs = app.docs || [];
+        function docIcon(name) {
+          const ext = (name||'').split('.').pop().toLowerCase();
+          if (['jpg','jpeg','png','gif','webp'].includes(ext)) return '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+          if (ext==='pdf') return '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+          return '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+        }
+        const rows = docs.length ? docs.map(doc => `
+          <div class="doc-row">
+            <div class="doc-icon">${docIcon(doc.name)}</div>
+            <div class="doc-info">
+              <div class="doc-name">${esc(doc.name)}</div>
+              <div class="doc-meta">Stored in Google Drive</div>
+            </div>
+            <div class="doc-actions">
+              <button class="doc-btn" title="Download" onclick="downloadAppDoc('${appId}','${doc.id}','${esc(doc.name)}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+              <button class="doc-btn" title="Share" onclick="shareDoc('${doc.id}','${esc(doc.name)}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              </button>
+              <button class="doc-btn danger" title="Delete" onclick="deleteAppDoc('${appId}','${doc.id}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>`).join('') : '<div class="doc-row"><div style="color:var(--text3);font-size:14px;padding:4px 0">No documents uploaded yet</div></div>';
+        return `<div class="doc-section">${rows}</div>
+        <label class="doc-upload-btn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Document
+          <input type="file" accept="image/*,application/pdf,.doc,.docx" style="display:none" onchange="handleAppDocUpload(event,'${appId}')">
+        </label>`;
+      })()}
 
       <div style="margin-top:24px">
         <button class="action-btn danger" onclick="deleteApp('${appId}')">
