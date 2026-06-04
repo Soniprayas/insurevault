@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f2942">
+<meta name="theme-color" content="#f0f4f8">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="InsureVault">
-<title>InsureVault</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="VaultKey">
+<title>VaultKey</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -1798,12 +1801,46 @@ function goBackToDash() {
   showScreen('screen-dash');
 }
 
-// Register service worker for offline/PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
+// ── NUCLEAR CACHE BUSTER ──
+// Runs before anything else — unregisters all old SWs, clears all caches
+(async function bustCache() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    // 1. Unregister every service worker
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r => r.unregister()));
+
+    // 2. Delete every cache
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+
+    // 3. If we just cleared something, do a hard reload once
+    if (regs.length > 0 || keys.length > 0) {
+      const alreadyReloaded = sessionStorage.getItem('_cache_busted');
+      if (!alreadyReloaded) {
+        sessionStorage.setItem('_cache_busted', '1');
+        window.location.reload(true);
+        return;
+      }
+    }
+
+    // 4. Now register the fresh SW
+    const reg = await navigator.serviceWorker.register('./sw.js?v=' + Date.now());
+    if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing;
+      nw.addEventListener('statechange', () => {
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          nw.postMessage('SKIP_WAITING');
+        }
+      });
+    });
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+  } catch(e) { console.log('Cache bust error:', e); }
+})();
 </script>
 </body>
 </html>
